@@ -69,6 +69,11 @@ public class MainController {
         return driverRepository.findDriversByWinsBetween(from, to);
     }
 
+    @GetMapping(path = "/points")
+    public @ResponseBody Iterable<Driver> pointsBetween(@RequestParam int from, @RequestParam int to) {
+        return driverRepository.findDriversByPointsBetween(from, to);
+    }
+
     @GetMapping(path = "/most-points")
     public @ResponseBody Iterable<Driver> getDriverWithMostPoints() {
         return driverRepository.findFirstByOrderByPointsDesc();

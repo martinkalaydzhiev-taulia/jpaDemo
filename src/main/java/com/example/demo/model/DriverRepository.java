@@ -7,7 +7,7 @@ import java.util.Optional;
 public interface DriverRepository extends CrudRepository<Driver, Long> {
     @Override
     Iterable<Driver> findAll();
-
+    Iterable<Driver> findDriversByPointsBetween(int from, int to);
     Iterable<Driver> findAllByFirstName(String name);
     Iterable<Driver> findAllByLastName(String name);
     Iterable<Driver> findDriversByWinsBefore(int n);
