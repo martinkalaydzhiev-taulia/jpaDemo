@@ -2,7 +2,6 @@ package com.example.demo.model;
 
 import org.springframework.data.repository.CrudRepository;
 
-import java.util.Optional;
 
 public interface DriverRepository extends CrudRepository<Driver, Long> {
     @Override
