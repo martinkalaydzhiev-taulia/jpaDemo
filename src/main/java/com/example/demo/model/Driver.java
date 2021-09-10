@@ -19,4 +19,16 @@ public class Driver {
     private int poles;
     private int fastestLaps;
     private double points;
+
+    public Driver() {}
+
+    public Driver(long id, String firstName, String lastName, int wins, int poles, int fastestLaps, double points) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.wins = wins;
+        this.poles = poles;
+        this.fastestLaps = fastestLaps;
+        this.points = points;
+    }
 }

@@ -2,12 +2,7 @@ package com.example.demo.model;
 
 import org.springframework.data.repository.CrudRepository;
 
-import java.util.Optional;
-
 public interface DriverRepository extends CrudRepository<Driver, Long> {
-    @Override
-    Iterable<Driver> findAll();
-
     Iterable<Driver> findAllByFirstName(String name);
     Iterable<Driver> findAllByLastName(String name);
     Iterable<Driver> findDriversByWinsBefore(int n);

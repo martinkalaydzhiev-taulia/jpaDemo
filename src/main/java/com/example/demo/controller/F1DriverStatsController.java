@@ -3,20 +3,18 @@ package com.example.demo.controller;
 import com.example.demo.model.Driver;
 import com.example.demo.model.DriverRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/demo")
+@RequestMapping("/f1stats")
 @RequiredArgsConstructor
-public class MainController {
+public class F1DriverStatsController {
     private final DriverRepository driverRepository;
 
     @PostMapping(path = "/add")
-    public @ResponseBody String addNewDriver(@RequestParam String firstname,
+    public @ResponseBody String addDriver(@RequestParam String firstname,
                         @RequestParam String lastname,
                         @RequestParam int wins,
                         @RequestParam int poles,
@@ -34,7 +32,7 @@ public class MainController {
     }
 
     @PostMapping(path = "/addDriver")
-    public @ResponseBody String addNewDriver(@RequestBody Driver driver) {
+    public @ResponseBody String addDriver(@RequestBody Driver driver) {
         driverRepository.save(driver);
         return "Saved";
     }
@@ -54,7 +52,7 @@ public class MainController {
         return driverRepository.findAllByFirstName(firstName);
     }
 
-    @GetMapping(path = "/get-all-lastname-{lastname}")
+    @GetMapping(path = "/get-all-lastname-{lastName}")
     public Iterable<Driver> getDriversWithLastName(@PathVariable String lastName) {
         return driverRepository.findAllByLastName(lastName);
     }
