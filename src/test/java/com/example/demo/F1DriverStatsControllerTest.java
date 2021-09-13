@@ -3,6 +3,7 @@ package com.example.demo;
 import com.example.demo.controller.F1DriverStatsController;
 import com.example.demo.model.Driver;
 import com.example.demo.model.DriverRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -219,16 +220,28 @@ public class F1DriverStatsControllerTest {
     }
 
     @Test
-    public void addDriver() throws Exception{
+    public void addDriver() throws Exception {
+        doReturn(new Driver(3L, "Michael", "Schumacher", 91, 68, 65, 2500.0))
+                .when(driverRepository)
+                .save(any());
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/f1stats/addDriver")
                         .content("{\"firstName\":\"Michael\",\"lastName\":\"Schumacher\",\"wins\":91,\"poles\":68,\"fastestLaps\":65,\"points\":2500.0}")
-
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
         )
                 .andExpect(status().isCreated())
-                .andExpect(content().string("Saved"));
-        verify(driverRepository).save(new Driver(3, "Michael", "Schumacher", 91, 68, 65, 2500.0));
+                .andExpect(content().string("{\"id\":3,\"firstName\":\"Michael\",\"lastName\":\"Schumacher\",\"wins\":91,\"poles\":68,\"fastestLaps\":65,\"points\":2500.0}"));
+        verify(driverRepository).save(new Driver(null, "Michael", "Schumacher", 91, 68, 65, 2500.0));
         verifyNoMoreInteractions(driverRepository);
+    }
+
+    public static String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
@@ -236,7 +249,8 @@ public class F1DriverStatsControllerTest {
 
     }
 
-    @Test void updateDriver() {
+    @Test
+    void updateDriver() {
 
     }
 }

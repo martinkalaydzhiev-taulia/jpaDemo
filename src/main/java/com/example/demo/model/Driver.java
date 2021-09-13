@@ -1,12 +1,14 @@
 package com.example.demo.model;
 
 import lombok.Data;
+import lombok.With;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+@With
 @Data
 @Entity
 public class Driver {
@@ -22,7 +24,7 @@ public class Driver {
 
     public Driver() {}
 
-    public Driver(long id, String firstName, String lastName, int wins, int poles, int fastestLaps, double points) {
+    public Driver(Long id, String firstName, String lastName, int wins, int poles, int fastestLaps, double points) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;

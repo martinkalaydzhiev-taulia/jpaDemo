@@ -3,9 +3,16 @@ package com.example.demo.controller;
 import com.example.demo.model.Driver;
 import com.example.demo.model.DriverRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.transaction.Transactional;
 import java.util.Optional;
+
+import static org.springframework.http.ResponseEntity.notFound;
+import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("/f1stats")
@@ -14,12 +21,13 @@ public class F1DriverStatsController {
     private final DriverRepository driverRepository;
 
     @PostMapping(path = "/add")
-    public @ResponseBody String addDriver(@RequestParam String firstname,
-                        @RequestParam String lastname,
-                        @RequestParam int wins,
-                        @RequestParam int poles,
-                        @RequestParam int fastest,
-                        @RequestParam double points) {
+    public @ResponseBody
+    ResponseEntity<Driver> addDriver(@RequestParam String firstname,
+                                     @RequestParam String lastname,
+                                     @RequestParam int wins,
+                                     @RequestParam int poles,
+                                     @RequestParam int fastest,
+                                     @RequestParam double points) {
         Driver driver = new Driver();
         driver.setFirstName(firstname);
         driver.setLastName(lastname);
@@ -28,13 +36,21 @@ public class F1DriverStatsController {
         driver.setFastestLaps(fastest);
         driver.setPoints(points);
         driverRepository.save(driver);
-        return "Saved";
+        return new ResponseEntity<>(driver, HttpStatus.CREATED);
+    }
+
+    @GetMapping(path = "/test")
+    public @ResponseBody
+    int asd(@PathVariable(required = false) int n) {
+        System.out.println(n);
+        return 0;
     }
 
     @PostMapping(path = "/addDriver")
-    public @ResponseBody String addDriver(@RequestBody Driver driver) {
-        driverRepository.save(driver);
-        return "Saved";
+    public @ResponseBody
+    ResponseEntity<Driver> addDriver(@RequestBody Driver driver) {
+        Driver savedDriver = driverRepository.save(driver);
+        return new ResponseEntity<>(savedDriver, HttpStatus.CREATED);
     }
 
     @GetMapping(path = "/all")
@@ -63,38 +79,69 @@ public class F1DriverStatsController {
     }
 
     @GetMapping(path = "/wins")
-    public @ResponseBody Iterable<Driver> winsBetween(@RequestParam int from, @RequestParam int to) {
+    public @ResponseBody
+    Iterable<Driver> winsBetween(@RequestParam int from, @RequestParam int to) {
         return driverRepository.findDriversByWinsBetween(from, to);
     }
 
     @GetMapping(path = "/most-points")
-    public @ResponseBody Iterable<Driver> getDriverWithMostPoints() {
+    public @ResponseBody
+    Iterable<Driver> getDriverWithMostPoints() {
         return driverRepository.findFirstByOrderByPointsDesc();
     }
 
     @GetMapping(path = "/sort-by-wins")
-    public @ResponseBody Iterable<Driver> getDriversSortedByWins() {
+    public @ResponseBody
+    Iterable<Driver> getDriversSortedByWins() {
         return driverRepository.findAllByOrderByWinsDesc();
     }
 
     @GetMapping(path = "/sort-by-points")
-    public @ResponseBody Iterable<Driver> getDriversSortedByPoints() {
+    public @ResponseBody
+    Iterable<Driver> getDriversSortedByPoints() {
         return driverRepository.findAllByOrderByPointsDesc();
     }
 
     @GetMapping(path = "/wins-above")
-    public @ResponseBody Iterable<Driver> getDriversWithMoreWinsThan(int n) {
+    public @ResponseBody
+    Iterable<Driver> getDriversWithMoreWinsThan(int n) {
         return driverRepository.findDriversByWinsAfter(n);
     }
 
     @GetMapping(path = "/wins-below")
-    public @ResponseBody Iterable<Driver> getDriversWithLessWinsThan(int n) {
+    public @ResponseBody
+    Iterable<Driver> getDriversWithLessWinsThan(int n) {
         return driverRepository.findDriversByWinsBefore(n);
     }
 
     @DeleteMapping(path = "/del/{id}")
-    public @ResponseBody String deleteDriver(@PathVariable Long id) {
+    public @ResponseBody
+    ResponseEntity<Driver> deleteDriver(@PathVariable Long id) {
         driverRepository.deleteById(id);
-        return "record deleted";
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    }
+
+    @PutMapping(path = "/update/{id}")
+    public ResponseEntity<Driver> updateDriverWins(
+            @PathVariable Long id,
+            @RequestParam Optional<String> firstName,
+            @RequestParam Optional<String> lastName,
+            @RequestParam Optional<Integer> wins,
+            @RequestParam Optional<Integer> poles,
+            @RequestParam Optional<Integer> fastestLaps,
+            @RequestParam Optional<Double> points) {
+        return driverRepository.findById(id)
+                .map(driver -> {
+                    firstName.ifPresent(driver::setFirstName);
+                    lastName.ifPresent(driver::setLastName);
+                    wins.ifPresent(driver::setWins);
+                    poles.ifPresent(driver::setPoles);
+                    fastestLaps.ifPresent(driver::setFastestLaps);
+                    points.ifPresent(driver::setPoints);
+                    driverRepository.save(driver);
+
+                    return ok(driver);
+                })
+                .orElseGet(() -> notFound().build());
     }
 }
