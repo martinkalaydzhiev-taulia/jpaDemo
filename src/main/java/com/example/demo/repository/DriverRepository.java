@@ -1,5 +1,6 @@
-package com.example.demo.model;
+package com.example.demo.repository;
 
+import com.example.demo.model.Driver;
 import org.springframework.data.repository.CrudRepository;
 
 public interface DriverRepository extends CrudRepository<Driver, Long> {

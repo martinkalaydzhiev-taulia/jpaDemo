@@ -1,14 +1,14 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Driver;
-import com.example.demo.model.DriverRepository;
+import com.example.demo.model.Team;
+import com.example.demo.repository.DriverRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.transaction.Transactional;
+import javax.swing.*;
 import java.util.Optional;
 
 import static org.springframework.http.ResponseEntity.notFound;
@@ -28,7 +28,10 @@ public class F1DriverStatsController {
                                      @RequestParam int poles,
                                      @RequestParam int fastest,
                                      @RequestParam double points) {
-        Driver driver = new Driver();
+        Team team = Team.builder()
+                .teamName("Ferrari")
+                .build();
+        Driver driver = Driver.builder().currentTeam(team).build();
         driver.setFirstName(firstname);
         driver.setLastName(lastname);
         driver.setWins(wins);
@@ -39,17 +42,11 @@ public class F1DriverStatsController {
         return new ResponseEntity<>(driver, HttpStatus.CREATED);
     }
 
-    @GetMapping(path = "/test")
-    public @ResponseBody
-    int asd(@PathVariable(required = false) int n) {
-        System.out.println(n);
-        return 0;
-    }
-
     @PostMapping(path = "/addDriver")
     public @ResponseBody
     ResponseEntity<Driver> addDriver(@RequestBody Driver driver) {
         Driver savedDriver = driverRepository.save(driver);
+        savedDriver.setCurrentTeam(Team.builder().teamName("Ferrari").build());
         return new ResponseEntity<>(savedDriver, HttpStatus.CREATED);
     }
 

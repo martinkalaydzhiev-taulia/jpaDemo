@@ -1,25 +1,27 @@
 package com.example.demo.model;
 
+
 import lombok.*;
 
 import javax.persistence.*;
 
 @With
-@Data
 @Entity
+@Table(name = "teams")
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Driver {
+public class Team {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String firstName;
-    private String lastName;
-    private int wins;
-    private int poles;
-    private int fastestLaps;
-    private double points;
+    private String teamName;
+    private Double points;
+
     @OneToOne
-    private Team currentTeam;
+    private Driver firstDriver;
+    @OneToOne
+    private Driver secondDriver;
+
 }

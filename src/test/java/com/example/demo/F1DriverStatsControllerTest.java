@@ -2,7 +2,7 @@ package com.example.demo;
 
 import com.example.demo.controller.F1DriverStatsController;
 import com.example.demo.model.Driver;
-import com.example.demo.model.DriverRepository;
+import com.example.demo.repository.DriverRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 
 import java.util.Arrays;
@@ -34,7 +33,7 @@ public class F1DriverStatsControllerTest {
     @Test
     public void getDriverByID() throws Exception {
         doReturn(Optional.of(
-                new Driver(1L, "Michael", "Schumacher", 91, 68, 70, 2500)))
+                new Driver(1L, "Michael", "Schumacher", 91, 68, 70, 2500, null)))
                 .when(driverRepository).findById(anyLong());
 
         mockMvc.perform(
@@ -67,8 +66,8 @@ public class F1DriverStatsControllerTest {
     @Test
     public void getDriversByFirstName2() throws Exception {
         doReturn(Arrays.asList(
-                new Driver(1L, "Michael", "asd", 10, 12, 0, 50),
-                new Driver(2L, "Michael", "Schu", 90, 80, 70, 1000))
+                new Driver(1L, "Michael", "asd", 10, 12, 0, 50, null),
+                new Driver(2L, "Michael", "Schu", 90, 80, 70, 1000, null))
         )
                 .when(driverRepository).findAllByFirstName("Michael");
 
@@ -87,8 +86,8 @@ public class F1DriverStatsControllerTest {
     @Test
     public void getAllDrivers() throws Exception {
         doReturn(Arrays.asList(
-                new Driver(3L, "M", "S", 30, 0, 10, 390),
-                new Driver(10L, "M", "H", 10, 9, 8, 221))
+                new Driver(3L, "M", "S", 30, 0, 10, 390, null),
+                new Driver(10L, "M", "H", 10, 9, 8, 221, null))
         )
                 .when(driverRepository).findAll();
 
@@ -105,8 +104,8 @@ public class F1DriverStatsControllerTest {
     @Test
     public void getDriversByLastName() throws Exception {
         doReturn(Arrays.asList(
-                new Driver(3L, "Graham", "Hill", 30, 0, 10, 390),
-                new Driver(10L, "Damon", "Hill", 10, 9, 8, 221))
+                new Driver(3L, "Graham", "Hill", 30, 0, 10, 390, null),
+                new Driver(10L, "Damon", "Hill", 10, 9, 8, 221, null))
         )
                 .when(driverRepository).findAllByLastName("Hill");
 
@@ -123,7 +122,7 @@ public class F1DriverStatsControllerTest {
     @Test
     public void getDriversWithMostWins() throws Exception {
         doReturn(Arrays.asList(
-                new Driver(3L, "Michael", "Schumacher", 91, 68, 65, 2500))
+                new Driver(3L, "Michael", "Schumacher", 91, 68, 65, 2500, null))
         )
                 .when(driverRepository).findFirstByOrderByWinsDesc();
 
@@ -140,7 +139,7 @@ public class F1DriverStatsControllerTest {
     @Test
     public void getDriversWithWinsInRange() throws Exception {
         doReturn(Arrays.asList(
-                new Driver(3L, "Michael", "Schumacher", 91, 68, 65, 2500))
+                new Driver(3L, "Michael", "Schumacher", 91, 68, 65, 2500, null))
         )
                 .when(driverRepository).findDriversByWinsBetween(50, 95);
 
@@ -159,7 +158,7 @@ public class F1DriverStatsControllerTest {
     @Test
     public void getDriversWithMostPoints() throws Exception {
         doReturn(Arrays.asList(
-                new Driver(3L, "Michael", "Schumacher", 91, 68, 65, 2500))
+                new Driver(3L, "Michael", "Schumacher", 91, 68, 65, 2500, null))
         )
                 .when(driverRepository).findFirstByOrderByPointsDesc();
 
@@ -221,7 +220,7 @@ public class F1DriverStatsControllerTest {
 
     @Test
     public void addDriver() throws Exception {
-        doReturn(new Driver(3L, "Michael", "Schumacher", 91, 68, 65, 2500.0))
+        doReturn(new Driver(3L, "Michael", "Schumacher", 91, 68, 65, 2500.0, null))
                 .when(driverRepository)
                 .save(any());
         mockMvc.perform(
@@ -232,7 +231,7 @@ public class F1DriverStatsControllerTest {
         )
                 .andExpect(status().isCreated())
                 .andExpect(content().string("{\"id\":3,\"firstName\":\"Michael\",\"lastName\":\"Schumacher\",\"wins\":91,\"poles\":68,\"fastestLaps\":65,\"points\":2500.0}"));
-        verify(driverRepository).save(new Driver(null, "Michael", "Schumacher", 91, 68, 65, 2500.0));
+        verify(driverRepository).save(new Driver(null, "Michael", "Schumacher", 91, 68, 65, 2500.0, null));
         verifyNoMoreInteractions(driverRepository);
     }
 
