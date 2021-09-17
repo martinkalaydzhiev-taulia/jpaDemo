@@ -230,26 +230,40 @@ public class F1DriverStatsControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
         )
                 .andExpect(status().isCreated())
-                .andExpect(content().string("{\"id\":3,\"firstName\":\"Michael\",\"lastName\":\"Schumacher\",\"wins\":91,\"poles\":68,\"fastestLaps\":65,\"points\":2500.0}"));
+                .andExpect(content().string("{\"id\":3,\"firstName\":\"Michael\",\"lastName\":\"Schumacher\",\"wins\":91,\"poles\":68,\"fastestLaps\":65,\"points\":2500.0,\"currentTeam\":{\"id\":null,\"teamName\":\"Ferrari\",\"points\":null,\"firstDriver\":null,\"secondDriver\":null}}"));
         verify(driverRepository).save(new Driver(null, "Michael", "Schumacher", 91, 68, 65, 2500.0, null));
         verifyNoMoreInteractions(driverRepository);
     }
 
-    public static String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+
+    @Test
+    public void deleteDriver() throws Exception {
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/f1stats/del/", 1)
+                        .content("{\"firstName\":\"Michael\",\"lastName\":\"Schumacher\",\"wins\":91,\"poles\":68,\"fastestLaps\":65,\"points\":2500.0}")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+        )
+                .andExpect(status().is2xxSuccessful());
+        verify(driverRepository).deleteById(1L);
+        verifyNoMoreInteractions(driverRepository);
     }
 
     @Test
-    public void deleteDriver() {
-
-    }
-
-    @Test
-    void updateDriver() {
-
+    void updateDriver() throws Exception {
+        doReturn(new Driver(3L, "Michael", "Schumacher", 91, 68, 65, 2500.0, null))
+                .when(driverRepository)
+                .save(any());
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/f1stats/addDriver")
+                        .content("{\"firstName\":\"Michael\",\"lastName\":\"Schumacher\",\"wins\":91,\"poles\":68,\"fastestLaps\":65,\"points\":2500.0}")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+        )
+                .andExpect(status().isCreated())
+                .andExpect(content().string("{\"id\":3,\"firstName\":\"Michael\",\"lastName\":\"Schumacher\",\"wins\":91,\"poles\":68,\"fastestLaps\":65,\"points\":2500.0,\"currentTeam\":{\"id\":null,\"teamName\":\"Ferrari\",\"points\":null,\"firstDriver\":null,\"secondDriver\":null}}"));
+        verify(driverRepository).save(new Driver(null, "Michael", "Schumacher", 91, 68, 65, 2500.0, null));
+        verifyNoMoreInteractions(driverRepository);
     }
 }
